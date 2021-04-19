@@ -21,7 +21,6 @@ def get_data_from_file(file_name):
     stocks = []
     with open(file_name) as f:
         for line in f:
-            print(line)
             if not keys:
                 keys = line.replace("\n", "").split(',')
             else:
@@ -30,8 +29,6 @@ def get_data_from_file(file_name):
                 for i in range(len(keys)):  # 0,1 => keys[0] ='First Name', key[1]= 'Last Name'
                     d[keys[i]] = lst[i]
                 stocks.append(d)
-    print(f"Meta ={keys}")
-    print(f"Data ={stocks}")
     return stocks
 
 
@@ -52,13 +49,15 @@ def find_cheapest_stock(stock_list):
     :param stock_list: list dicts, every dict describes a stock
     :return: dict, the cheapest stock
     """
-    cheap = []
-    for i in stock_list:
-        cheap.append((i['Name'], i['PE Ratio']))
-    cheap.sort(key=lambda f: f[0], reverse=True)
-    print(cheap[-1][0])
-    return cheap[-1][0]
-
+    cheap = [(i['Name'], i['PE Ratio']) for i in stock_list]
+    cheap.sort(key=lambda i: float(i[1]))
+    print(cheap)
+    while True:
+        for i in cheap:
+            if float(i[1]) > 0:
+                print(i[0])
+                return i
+        break
 
 
 def find_bargain_stock(stock_list):
