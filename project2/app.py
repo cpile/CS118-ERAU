@@ -52,7 +52,13 @@ def find_cheapest_stock(stock_list):
     :param stock_list: list dicts, every dict describes a stock
     :return: dict, the cheapest stock
     """
-    pass  # instead of pass, your code here ....
+    cheap = []
+    for i in stock_list:
+        cheap.append((i['Name'], i['PE Ratio']))
+    cheap.sort(key=lambda f: f[0], reverse=True)
+    print(cheap[-1][0])
+    return cheap[-1][0]
+
 
 
 def find_bargain_stock(stock_list):
@@ -90,7 +96,7 @@ while True:
 # un comment this section line by line and make the program work
 
 list_of_stocks = get_data_from_file(DATA_FILE)
-# cheapest = find_cheapest_stock(list_of_stocks)
+cheapest = find_cheapest_stock(list_of_stocks)
 # bargain = find_bargain_stock(list_of_stocks)
 #
 # show(list_of_stocks, "Market Cap")
