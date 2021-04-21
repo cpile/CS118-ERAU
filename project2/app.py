@@ -29,6 +29,7 @@ def get_data_from_file(file_name):
                 for i in range(len(keys)):  # 0,1 => keys[0] ='First Name', key[1]= 'Last Name'
                     d[keys[i]] = lst[i]
                 stocks.append(d)
+    print(stocks)
     return stocks
 
 
@@ -56,7 +57,12 @@ def find_cheapest_stock(stock_list):
         for i in cheap:
             if float(i[1]) > 0:
                 print(i[0])
-                return i
+                print(i)
+                low = i[0]
+                for k in stock_list:
+                    if k['Name'] == low:
+                        print(k)
+                        return k
         break
 
 
