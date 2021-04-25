@@ -17,7 +17,17 @@ def get_data_from_file(file_name):
     :param file_name: file path (str)
     :return: list of dicts
     """
-    keys = None
+    stocks = []
+    with open(file_name) as fh:
+        keys = line2words(fh.readline())
+        for line in fh:
+            stocks.append(dict(zip(keys, line2words(line))))
+    for i in stocks:
+        print(i)
+    return stocks
+
+
+    '''keys = None
     stocks = []
     with open(file_name) as f:
         for line in f:
@@ -30,7 +40,7 @@ def get_data_from_file(file_name):
                     d[keys[i]] = lst[i]
                 stocks.append(d)
     print(stocks)
-    return stocks
+    return stocks'''
 
 
 def get_num_of_shares(stock, investment):
@@ -50,20 +60,19 @@ def find_cheapest_stock(stock_list):
     :param stock_list: list dicts, every dict describes a stock
     :return: dict, the cheapest stock
     """
-    cheap = [(i['Name'], i['PE Ratio']) for i in stock_list]
-    cheap.sort(key=lambda i: float(i[1]))
+
+    cheap = [(i['Name'], i['PE Ratio']) for i in stock_list]  # makes a list of tuples [(Stock Name, PE Ratio)]
+    cheap.sort(key=lambda i: float(i[1]))  # uses lamba to sort list of tuples by PE Ratio
     print(cheap)
-    while True:
-        for i in cheap:
-            if float(i[1]) > 0:
-                print(i[0])
-                print(i)
-                low = i[0]
-                for k in stock_list:
-                    if k['Name'] == low:
-                        print(k)
-                        return k
-        break
+    for i in cheap:  # finds the cheapest stock that has a PE Ratio > 0
+        if float(i[1]) > 0:
+            print(i[0])
+            print(i)
+            low = i[0]
+            for k in stock_list:
+                if k['Name'] == low:
+                    print(k)
+                    return k
 
 
 def find_bargain_stock(stock_list):
@@ -74,8 +83,16 @@ def find_bargain_stock(stock_list):
     :param stock_list: list dicts, every dict describes a stock
     :return: dict, the cheapest stock
     """
-    pass  # instead of pass, your code here ....
 
+    bargain_stocks = [(i['Name'], i['Price'], i['52 Week Range'].split(':')) for i in stock_list]
+    lowest = [(k[0], float(k[1]) - float(k[2][0]) / float(k[2][1]) - float(k[2][0])) for k in bargain_stocks]
+    print(bargain_stocks)
+    print(lowest)
+    bargain_stock = min(lowest, key=lambda f: f[1])
+    print(bargain_stock)
+    for i in stock_list:
+        if i['Name'] == bargain_stock[1]:
+            return i
 
 def show(list_of_dicts, key):
     """
@@ -87,6 +104,10 @@ def show(list_of_dicts, key):
     print("\nHere are the stocks I have considered for you:")
     for i in list_of_dicts:
         pass  # instead of pass, your code here ....
+
+
+def line2words(line):
+    return line.replace("\n", "").split(',')
 
 
 DATA_FILE = "stocks.csv"
@@ -102,10 +123,10 @@ while True:
 
 list_of_stocks = get_data_from_file(DATA_FILE)
 cheapest = find_cheapest_stock(list_of_stocks)
-# bargain = find_bargain_stock(list_of_stocks)
+bargain = find_bargain_stock(list_of_stocks)
 #
 # show(list_of_stocks, "Market Cap")
-# print(f"\nCurrently, the cheapest stock is {cheapest['Name']}")
+print(f"\nCurrently, the cheapest stock is {cheapest['Name']}")
 # print(f"You could buy {get_num_of_shares(cheapest, float(x))} shares.")
 # print(f"\n{bargain['Name']} is trading relatively low, considering its 52 week trading range.")
 # print(f"At ${bargain['Price']} per share, you could buy {get_num_of_shares(bargain, float(x))}")
