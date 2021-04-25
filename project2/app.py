@@ -22,25 +22,7 @@ def get_data_from_file(file_name):
         keys = line2words(fh.readline())
         for line in fh:
             stocks.append(dict(zip(keys, line2words(line))))
-    for i in stocks:
-        print(i)
     return stocks
-
-
-    '''keys = None
-    stocks = []
-    with open(file_name) as f:
-        for line in f:
-            if not keys:
-                keys = line.replace("\n", "").split(',')
-            else:
-                d = {}
-                lst = line.replace("\n", "").split(",")  # e.g. 'John,Doe' => ['John','Doe']
-                for i in range(len(keys)):  # 0,1 => keys[0] ='First Name', key[1]= 'Last Name'
-                    d[keys[i]] = lst[i]
-                stocks.append(d)
-    print(stocks)
-    return stocks'''
 
 
 def get_num_of_shares(stock, investment):
@@ -50,7 +32,7 @@ def get_num_of_shares(stock, investment):
     :param investment: int of float
     :return: stock['Price']//investment (int)
     """
-    return 0  # instead of 0, your code here ....
+    return int(investment // float(stock['Price']))
 
 
 def find_cheapest_stock(stock_list):
@@ -63,15 +45,11 @@ def find_cheapest_stock(stock_list):
 
     cheap = [(i['Name'], i['PE Ratio']) for i in stock_list]  # makes a list of tuples [(Stock Name, PE Ratio)]
     cheap.sort(key=lambda i: float(i[1]))  # uses lamba to sort list of tuples by PE Ratio
-    print(cheap)
     for i in cheap:  # finds the cheapest stock that has a PE Ratio > 0
         if float(i[1]) > 0:
-            print(i[0])
-            print(i)
             low = i[0]
             for k in stock_list:
                 if k['Name'] == low:
-                    print(k)
                     return k
 
 
@@ -85,14 +63,12 @@ def find_bargain_stock(stock_list):
     """
 
     bargain_stocks = [(i['Name'], i['Price'], i['52 Week Range'].split(':')) for i in stock_list]
-    lowest = [(k[0], float(k[1]) - float(k[2][0]) / float(k[2][1]) - float(k[2][0])) for k in bargain_stocks]
-    print(bargain_stocks)
-    print(lowest)
+    lowest = [(k[0], (float(k[1]) - float(k[2][0])) / (float(k[2][1]) - float(k[2][0]))) for k in bargain_stocks]
     bargain_stock = min(lowest, key=lambda f: f[1])
-    print(bargain_stock)
     for i in stock_list:
-        if i['Name'] == bargain_stock[1]:
+        if i['Name'] == bargain_stock[0]:
             return i
+
 
 def show(list_of_dicts, key):
     """
@@ -102,8 +78,8 @@ def show(list_of_dicts, key):
     :return: None
     """
     print("\nHere are the stocks I have considered for you:")
-    for i in list_of_dicts:
-        pass  # instead of pass, your code here ....
+    for i in list_of_dicts:  # iterates through list_of_dicts and prints Name and Market Cap
+        print(f" - {i['Name']} - Market Cap is {i['Market Cap']} ")
 
 
 def line2words(line):
@@ -125,13 +101,13 @@ list_of_stocks = get_data_from_file(DATA_FILE)
 cheapest = find_cheapest_stock(list_of_stocks)
 bargain = find_bargain_stock(list_of_stocks)
 #
-# show(list_of_stocks, "Market Cap")
+show(list_of_stocks, "Market Cap")
 print(f"\nCurrently, the cheapest stock is {cheapest['Name']}")
-# print(f"You could buy {get_num_of_shares(cheapest, float(x))} shares.")
-# print(f"\n{bargain['Name']} is trading relatively low, considering its 52 week trading range.")
-# print(f"At ${bargain['Price']} per share, you could buy {get_num_of_shares(bargain, float(x))}")
+print(f"You could buy {get_num_of_shares(cheapest, float(x))} shares.")
+print(f"\n{bargain['Name']} is trading relatively low, considering its 52 week trading range.")
+print(f"At ${bargain['Price']} per share, you could buy {get_num_of_shares(bargain, float(x))}")
 #
-# assert (len(list_of_stocks) == open(DATA_FILE).read().count('\n'))
-# assert (0 < float(cheapest['PE Ratio']))
-# assert (0 == get_num_of_shares(cheapest, 0))
-# assert (1 == get_num_of_shares(cheapest, float(cheapest['Price'])))
+assert (len(list_of_stocks) == open(DATA_FILE).read().count('\n'))
+assert (0 < float(cheapest['PE Ratio']))
+assert (0 == get_num_of_shares(cheapest, 0))
+assert (1 == get_num_of_shares(cheapest, float(cheapest['Price'])))
