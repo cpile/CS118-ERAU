@@ -1,5 +1,12 @@
 """
-    your docstring goes here ...
+    Author: Christopher Pile
+    Student ID: 2526666
+    Date last modified: 04/26/2021
+
+    This program takes in a text file of stocks and sorts that information into a list of dictionaries with
+    each dictionary being one stock. Based on user input the program then compares the amount the user wants
+    to invest against the stocks that are available and gives the user some information on what
+    stocks may be advantageous to purchase.
 """
 
 
@@ -19,8 +26,8 @@ def get_data_from_file(file_name):
     """
     stocks = []
     with open(file_name) as fh:
-        keys = line2words(fh.readline())
-        for line in fh:
+        keys = line2words(fh.readline())  # assigns the first line of the text document as the keys
+        for line in fh:  # reads the subsequent lines and assigns them as the as the values
             stocks.append(dict(zip(keys, line2words(line))))
     return stocks
 
@@ -44,11 +51,11 @@ def find_cheapest_stock(stock_list):
     """
 
     cheap = [(i['Name'], i['PE Ratio']) for i in stock_list]  # makes a list of tuples [(Stock Name, PE Ratio)]
-    cheap.sort(key=lambda i: float(i[1]))  # uses lamba to sort list of tuples by PE Ratio
+    cheap.sort(key=lambda i: float(i[1]))  # uses lambda to sort list of tuples by PE Ratio
     for i in cheap:  # finds the cheapest stock that has a PE Ratio > 0
         if float(i[1]) > 0:
             low = i[0]
-            for k in stock_list:
+            for k in stock_list: # returns the stock that matches the lowest PE Ratio > 0
                 if k['Name'] == low:
                     return k
 
@@ -61,11 +68,13 @@ def find_bargain_stock(stock_list):
     :param stock_list: list dicts, every dict describes a stock
     :return: dict, the cheapest stock
     """
-
+    # create a list that has the Name, Price and 52 Week range for each stock
     bargain_stocks = [(i['Name'], i['Price'], i['52 Week Range'].split(':')) for i in stock_list]
+    # creates a list of each stock and the price difference over the 52 weeks
     lowest = [(k[0], (float(k[1]) - float(k[2][0])) / (float(k[2][1]) - float(k[2][0]))) for k in bargain_stocks]
+    # finds the stock with the lowest price considering its 52 week price range
     bargain_stock = min(lowest, key=lambda f: f[1])
-    for i in stock_list:
+    for i in stock_list:  # returns the stock that has the best bargain price
         if i['Name'] == bargain_stock[0]:
             return i
 
@@ -79,10 +88,10 @@ def show(list_of_dicts, key):
     """
     print("\nHere are the stocks I have considered for you:")
     for i in list_of_dicts:  # iterates through list_of_dicts and prints Name and Market Cap
-        print(f" - {i['Name']} - Market Cap is {i['Market Cap']} ")
+        print(f" - {i['Name']} - {key} is {i[key]} ")
 
 
-def line2words(line):
+def line2words(line):  # splits each line from stocks.csv on the commas and turns it to a list
     return line.replace("\n", "").split(',')
 
 
