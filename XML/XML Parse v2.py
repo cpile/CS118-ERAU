@@ -6,18 +6,14 @@ operator = ""
 uut_result = ""
 test_type = ""
 uut_part = ""
-i = 0
 
-tree = ET.parse('Report[P200005 3-2 final][11 39 23 AM][1 27 2020].xml')
+#tree = ET.parse('Report[P200005 3-2 final][11 39 23 AM][1 27 2020].xml')
+#tree = ET.parse('Report[S200001 RMR 2-1 cold][10 33 24 AM][2 10 2020].xml')
+#tree = ET.parse('Report[S200001][5 51 04 AM][2 10 2020].xml')
+#tree = ET.parse('Report[S200020 4-2 cold][3 36 28 PM][1 29 2020].xml')
+#tree = ET.parse('Report[S200020 4-2 pre][12 04 48 PM][1 29 2020].xml')
+
 root = tree.getroot()
-xmlstr = ET.tostring(root, encoding='utf8', method='xml')
-
-root = ET.fromstring(xmlstr)
-# print(root)
-# print(type(root))
-
-# print(root[0][0][0][0].text)
-
 
 for report in root:  # parsing into first <Report> layer under <Reports>
     test_type = report.get('Type')
