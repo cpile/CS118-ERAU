@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import tkinter as tk
 from tkinter import filedialog
+from zipfile import ZipFile
 
 
 # C:\Users\pilecd\Desktop\XML\Report[P200005 3-2 final][11 39 23 AM][1 27 2020].xml
@@ -9,6 +10,17 @@ from tkinter import filedialog
 # tree = ET.parse('Report[S200001][5 51 04 AM][2 10 2020].xml')
 # tree = ET.parse('Report[S200020 4-2 cold][3 36 28 PM][1 29 2020].xml')
 # tree = ET.parse('Report[S200020 4-2 pre][12 04 48 PM][1 29 2020].xml')
+
+
+def unzip(zip_file):
+    with ZipFile(zip_file, 'r') as zf:
+        # display the files inside the zip
+        zf.printdir()
+        # Extracting the files from zip file
+        zf.extractall('EXTRACTED_FILES')
+        print(zf)
+        print('Zip Extraction Completed')
+
 
 def get_file():
     root = tk.Tk()
