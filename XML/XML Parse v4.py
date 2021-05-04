@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 import tkinter as tk
 from tkinter import filedialog
 from zipfile import ZipFile
+import os
 
 
 # C:\Users\pilecd\Desktop\XML\Report[P200005 3-2 final][11 39 23 AM][1 27 2020].xml
@@ -17,16 +18,26 @@ def unzip(zip_file):
         # display the files inside the zip
         zf.printdir()
         # Extracting the files from zip file
-        zf.extractall('EXTRACTED_FILES')
-        print(zf)
-        print('Zip Extraction Completed')
+        zf.extractall('EXTRACTED')
+        print('\n - Zip Extraction Completed - \n')
 
 
 def get_file():
     root = tk.Tk()
     root.withdraw()
     file_path = filedialog.askopenfilename()
-    return file_path
+    # if file is zip then a list is compiled of the extracted files and returned
+    if file_path[-3:] == 'zip':
+        unzip(file_path)
+        path = os.path.abspath('EXTRACTED')
+        xml_files = []
+        for subdir, dirs, files in os.walk(path):
+            for i in files:
+                realpath = os.path.realpath(os.path.join(subdir, i))  # getting real path of file
+                xml_files.append(realpath)
+        return xml_files
+    else:
+        return file_path
 
 
 def get_serial_number(root):
@@ -91,24 +102,62 @@ def get_uut_part(root):
 
 
 def main():
-    xmlfile = get_file()
-    with open(xmlfile, 'r') as fh:
-        tree = ET.parse(fh)
-        root = tree.getroot()
+    xml_file = get_file()
+    if type(xml_file) is list:
+        for i in xml_file:  # iterating through each xml file in the list to pull needed data
+            with open(i, 'r') as fh:
+                tree = ET.parse(fh)
+                root = tree.getroot()
+            print(f"Data for {i} - ")
+            serial_number = get_serial_number(root)
+            test_type = get_test_type(root)
+            uut_result = get_uut_result(root)
+            station_id = get_station_id(root)
+            operator = get_operator(root)
+            uut_part = get_uut_part(root)
+            print(f"     - Test Type: {test_type}")
+            print(f"     - UUT Result: {uut_result}")
+            print(f"     - Serial Number: {serial_number}")
+            print(f"     - Station ID: {station_id}")
+            print(f"     - Operator: {operator}")
+            print(f"     - {uut_part}")
+            print("\n")
+    else:  # if xmlfile is a single file then this code extracts the needed data
+        with open(xml_file, 'r') as fh:
+            tree = ET.parse(fh)
+            root = tree.getroot()
+        serial_number = get_serial_number(root)
+        test_type = get_test_type(root)
+        uut_result = get_uut_result(root)
+        station_id = get_station_id(root)
+        operator = get_operator(root)
+        uut_part = get_uut_part(root)
 
-    serial_number = get_serial_number(root)
-    test_type = get_test_type(root)
-    uut_result = get_uut_result(root)
-    station_id = get_station_id(root)
-    operator = get_operator(root)
-    uut_part = get_uut_part(root)
+        print(f"Test Type: {test_type}")
+        print(f"UUT Result: {uut_result}")
+        print(f"Serial Number: {serial_number}")
+        print(f"Station ID: {station_id}")
+        print(f"Operator: {operator}")
+        print(uut_part)
 
-    print(f"Test Type: {test_type}")
-    print(f"UUT Result: {uut_result}")
-    print(f"Serial Number: {serial_number}")
-    print(f"Station ID: {station_id}")
-    print(f"Operator: {operator}")
-    print(uut_part)
+
+#    with open(xmlfile, 'r') as fh:
+#        tree = ET.parse(fh)
+#        root = tree.getroot()
+
+#    serial_number = get_serial_number(root)
+#    test_type = get_test_type(root)
+#    uut_result = get_uut_result(root)
+#    station_id = get_station_id(root)
+#    operator = get_operator(root)
+#    uut_part = get_uut_part(root)
+
+#    print(f"Test Type: {test_type}")
+#    print(f"UUT Result: {uut_result}")
+#    print(f"Serial Number: {serial_number}")
+#    print(f"Station ID: {station_id}")
+#    print(f"Operator: {operator}")
+#    print(uut_part)
 
 
 if __name__ == '__main__':
